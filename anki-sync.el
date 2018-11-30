@@ -217,16 +217,17 @@
 
 (defun anki-parse-vocabulary-to-buffers (&optional prefix)
   (if (not prefix)
-      (anki-parse-vocabulary-to-buffers "vocabulary"))
-  (let ((bi  (get-buffer-create (concat prefix "-bi")))
-        (uni (get-buffer-create (concat prefix "-uni"))))
-    (with-current-buffer bi
-      (erase-buffer))
-    (with-current-buffer uni
-      (erase-buffer))
-    (anki-parse-vocabulary
-      (anki--format-card-proxy
-       (anki--append-card-to-buffers bi uni)))
+      (anki-parse-vocabulary-to-buffers "vocabulary")
+    (let ((bi  (get-buffer-create (concat prefix "-bi")))
+          (uni (get-buffer-create (concat prefix "-uni"))))
+      (with-current-buffer bi
+        (erase-buffer))
+      (with-current-buffer uni
+        (erase-buffer))
+      (anki-parse-vocabulary
+       (anki--format-card-proxy
+        (anki--append-card-to-buffers bi uni)))
+      )
     )
   )
 
