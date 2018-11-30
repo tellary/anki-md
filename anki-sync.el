@@ -58,14 +58,42 @@
     )
   )
 
+(defun anki--append-card-to-buffer (buffer-or-name)
+  (lambda (card-front card-back unidirectional)
+    (with-current-buffer buffer-or-name
+      (end-of-buffer)
+      (insert card-front)
+      (insert-char (aref "	" 0))
+      (insert card-back)
+      (insert-char (aref "	" 0))
+      (newline)
+      )
+    )
+  )
+
+(defun anki--append-card-to-buffers (bi-buffer uni-buffer)
+  (lambda (card-front card-back unidirectional)
+    (if unidirectional
+        (funcall
+         (anki--append-card-to-buffer uni-buffer)
+         card-front card-back unidirectional)
+      (funcall
+       (anki--append-card-to-buffer bi-buffer)
+       card-front card-back unidirectional)
+      )
+    )
+  )
+
 (defun anki-parse-vocabulary--card-front-beginning (card-info)
   (search-forward-regexp
-   "\\( \?-- \?\\)\\|\\(\n\\)\\|\\( \?-\> \?\\)")
+   "\\( \?-- \?\\)\\|\\(\n\n\\)\\|\\( \?-\> \?\\)")
+  (goto-char (match-end 0))
   (list
    (cons 'card-front-beginning
          (anki-get 'card-front-beginning card-info))
    (cons 'card-front-end (match-beginning 0))
-   (cons 'unidirectional (match-beginning 3))
+   (cons 'unidirectional
+         (or (match-beginning 2) (match-beginning 3)))
    (cons 'card-back-beginning (match-end 0)))
 )
 
@@ -77,7 +105,7 @@
         (card-back
          (buffer-substring-no-properties
           (anki-get 'card-back-beginning card-info)
-          (- (match-beginning 0) 1))))
+          (anki-get 'card-back-end card-info))))
     (funcall
      cb card-front card-back (anki-get 'unidirectional card-info))
     )
@@ -85,34 +113,67 @@
 
 
 (defun anki-parse-vocabulary (cb)
-  (let (card-info)
+  (let (card-info state)
     (while
         (and (search-forward-regexp "^-" nil t)
              (not (equal "-" (string (following-char))))
              (not (eobp)))
-      (when card-info
-        ;; card end state/next card beginning state here
-        (anki-parse-vocabulary--handle-card cb card-info))
       (cond
        ((equal " " (string (following-char)))
+        (setq state 'card-front-beginning)
+        (when card-info
+          ;; start of the next card, we should handle the previous one
+          (setq
+           card-info
+           (cons
+            (cons 'card-back-end (- (match-beginning 0) 1))
+            card-info))
+          (anki-parse-vocabulary--handle-card cb card-info))
         (setq
          card-info
          (let ((new-card-info
                 (list
                  (cons 'card-front-beginning (+ 1 (point))))))
            (anki-parse-vocabulary--card-front-beginning new-card-info)
-           ;; card back beginning state after this function is complete
            )
          )
+        (setq state 'card-back-beginning)
         )
        (t (error
            "New card or end of cards is expected, position: %s"
-           (point))))
+           (point)))
+       )
       )
-    ;; last card end state
-    (search-forward-regexp "\\'" nil t)
-    (anki-parse-vocabulary--handle-card cb card-info)
+    (when (eq state 'card-back-beginning)
+      ;; move to the end of current card
+      (if (equal "-" (string (following-char)))
+          (setq
+           card-info
+           (cons
+            (cons 'card-back-end (- (match-beginning 0) 1))
+            card-info))
+        (end-of-buffer)
+        (setq
+         card-info
+         (cons
+          (cons 'card-back-end (point))
+          card-info))
+        )
+      ;; handle the card once we are at the end of card
+      (anki-parse-vocabulary--handle-card cb card-info)
+      )
     t
+    )
+  )
+
+(defun anki-parse-vocabulary-to-buffers (&optional prefix)
+  (if (not prefix)
+      (anki-parse-vocabulary-to-buffers "vocabulary"))
+  (let ((bi  (get-buffer-create (concat prefix "-bi")))
+        (uni (get-buffer-create (concat prefix "-uni"))))
+    (anki-parse-vocabulary
+      (anki--format-card-proxy
+       (anki--append-card-to-buffers bi uni)))
     )
   )
 
