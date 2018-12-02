@@ -32,42 +32,43 @@
          (card (replace-regexp-in-string
                 "\\`[\n\t ]*\\|[\n\t ]*\\'" "" card))
          (l (split-string card "^[\t ]*-")) (result ()))
-    (if (equal 1 (length l))
-        ;; non-list card, just remove extra whitespace
-        (replace-regexp-in-string "[\n\t ]+" " " card)
-      (setq result-str
-            (dolist (line
-                     (cdr l)
-                     (mapconcat
-                      (lambda (s) (concat "- " s))
-                      result "\n"))
-              (setq result
-                    (append
-                     result
-                     (list
-                      (let* (
-                             ;; remove extra whitespace in each line
-                             (line
-                              (replace-regexp-in-string
-                               "[\n\t ]+" " " line))
-                             ;; Remove trailing waitspace in each line
-                             (line
-                              (replace-regexp-in-string
-                               "^[\n\t ]*\\|[\n\t ]*$" "" line))
-                             )
-                        line
+    (setq
+     result-str
+     (if (equal 1 (length l))
+         ;; non-list card, just remove extra whitespace
+         (replace-regexp-in-string "[\n\t ]+" " " card)
+       (dolist (line
+                (cdr l)
+                (mapconcat
+                 (lambda (s) (concat "- " s))
+                 result "\n"))
+         (setq result
+               (append
+                result
+                (list
+                 (let* (
+                        ;; remove extra whitespace in each line
+                        (line
+                         (replace-regexp-in-string
+                          "[\n\t ]+" " " line))
+                        ;; Remove trailing waitspace in each line
+                        (line
+                         (replace-regexp-in-string
+                          "^[\n\t ]*\\|[\n\t ]*$" "" line))
                         )
-                      )
-                     )
-                    )
-              )
-            )
-      (setq result-str
-            (replace-regexp-in-string "\n" "<br/>" result-str))
-      (setq result-str
-            (replace-regexp-in-string
-             "__\\([^_]*\\)__" "<b>\\1</b>" result-str nil nil))
-      )
+                   line
+                   )
+                 )
+                )
+               )
+         )
+       )
+     )
+    (setq result-str
+          (replace-regexp-in-string "\n" "<br/>" result-str))
+    (setq result-str
+          (replace-regexp-in-string
+           "__\\([^_]*\\)__" "<b>\\1</b>" result-str nil nil))
     )
   )
 
@@ -146,9 +147,17 @@
 (defun anki-parse-vocabulary--card-back-beginning (self)
   (cond
    ((search-forward-regexp "^-" nil t)
-    (beginning-of-line)
+    (if (equal "-" (string (following-char)))
+        ;; That's deck separator
+        ;; (Markdown H1 header or horizontal line)
+        (beginning-of-line 0)
+      ;; That's next card beginning,
+      ;; go to the end of the previous line --
+      ;; end of the previous card
+      (end-of-line 0)
+      )
     (anki-put self 'state 'card-back-end)
-    (anki-put self 'card-back-end (- (point) 1)))
+    (anki-put self 'card-back-end (point)))
    (t
     (end-of-buffer)
     (anki-put self 'state 'card-back-eob)
@@ -161,7 +170,10 @@
   (search-forward-regexp "^-" nil t)
   (if (equal "-" (string (following-char)))
       ;; We found deck separator -- done.
-      (anki-put self 'state 'end)
+      (progn
+        (anki-put self 'state 'end)
+        (end-of-line 1)
+        )
     ;; We found beginning of next card
     (when (equal " " (string (following-char)))
       (forward-char)
