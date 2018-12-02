@@ -35,31 +35,38 @@
     (if (equal 1 (length l))
         ;; non-list card, just remove extra whitespace
         (replace-regexp-in-string "[\n\t ]+" " " card)
-      (dolist (line
-               (cdr l)
-               (mapconcat
-                (lambda (s) (concat "- " s))
-                result "\n"))
-        (setq result
-              (append
-               result
-               (list
-                (let* (
-                       ;; remove extra whitespace in each line
-                       (line
-                        (replace-regexp-in-string
-                         "[\n\t ]+" " " line))
-                       ;; Remove trailing waitspace in each line
-                       (line
-                        (replace-regexp-in-string
-                         "^[\n\t ]*\\|[\n\t ]*$" "" line))
-                       )
-                  line
-                  )
-                )
-               )
+      (setq result-str
+            (dolist (line
+                     (cdr l)
+                     (mapconcat
+                      (lambda (s) (concat "- " s))
+                      result "\n"))
+              (setq result
+                    (append
+                     result
+                     (list
+                      (let* (
+                             ;; remove extra whitespace in each line
+                             (line
+                              (replace-regexp-in-string
+                               "[\n\t ]+" " " line))
+                             ;; Remove trailing waitspace in each line
+                             (line
+                              (replace-regexp-in-string
+                               "^[\n\t ]*\\|[\n\t ]*$" "" line))
+                             )
+                        line
+                        )
+                      )
+                     )
+                    )
               )
-        )
+            )
+      (setq result-str
+            (replace-regexp-in-string "\n" "<br/>" result-str))
+      (setq result-str
+            (replace-regexp-in-string
+             "__\\([^_]*\\)__" "<b>\\1</b>" result-str nil nil))
       )
     )
   )
