@@ -93,7 +93,7 @@
     )
   )
 
-(defun anki--append-card-to-buffers (bi-buffer uni-buffer)
+(defun anki--append-card-to-buffers (uni-buffer bi-buffer)
   (lambda (card-front card-back unidirectional)
     (if unidirectional
         (funcall
@@ -227,14 +227,29 @@
       (anki-parse-vocabulary-to-buffers "vocabulary")
     (let ((bi  (get-buffer-create (concat prefix "-bi")))
           (uni (get-buffer-create (concat prefix "-uni"))))
-      (with-current-buffer bi
-        (erase-buffer))
       (with-current-buffer uni
+        (erase-buffer))
+      (with-current-buffer bi
         (erase-buffer))
       (anki-parse-vocabulary
        (anki--format-card-proxy
-        (anki--append-card-to-buffers bi uni)))
+        (anki--append-card-to-buffers uni bi)))
+      (list uni bi)
       )
+    )
+  )
+
+(defun anki-write-vocabulary-to-buffers (&optional prefix)
+  (interactive)
+  (let* ((buffers (anki-parse-vocabulary-to-buffers prefix))
+         (uni (car  buffers))
+         (bi  (cadr buffers)))
+    (with-current-buffer uni
+      (write-file
+       (concat default-directory (buffer-name uni))))
+    (with-current-buffer bi
+      (write-file
+       (concat default-directory (buffer-name bi))))
     )
   )
 
