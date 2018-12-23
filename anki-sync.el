@@ -265,6 +265,12 @@
     )
   )
 
+(defun anki-parse-vocabulary-to-messages ()
+  (interactive)
+  (anki-parse-vocabulary
+   (anki--format-card-proxy 'anki-parse-vocabulary--print-cb))
+  )
+
 (defun anki-sync-line-to (buffer)
   (beginning-of-line)
   (forward-char 2)
