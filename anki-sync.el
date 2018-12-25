@@ -69,6 +69,9 @@
     (setq result-str
           (replace-regexp-in-string
            "__\\([^_]*\\)__" "<b>\\1</b>" result-str nil nil))
+    (when (equal "" result-str)
+      (error "Empty card found, position: %s" (point)))
+    result-str
     )
   )
 
@@ -129,9 +132,14 @@
 
 (defun anki-parse-vocabulary--card-front-beginning (self)
   (if (search-forward-regexp
-       "\\( \?-- \?\\)\\|\\(\n\n\\)\\|\\( \?-\> \?\\)"
+       "\\( \?-- \?\\)\\|\\(\n\n\\)\\|\\( \?-\> \?\\)\\|\\(^-\\)"
        nil t)
-      (progn
+      (if (match-string 4)
+          (error
+           (concat
+            "Front back side separator is expected, "
+            "but new card found, position: %s")
+           (point))
         (goto-char (match-end 0))
         (anki-put self 'state 'card-back-beginning)
         (anki-put self 'card-front-end (match-beginning 0))
@@ -140,7 +148,9 @@
         (anki-put self 'card-back-beginning (match-end 0))
         )
     (error
-     "Front back side separator is expected , position: %s" (point))
+     (concat
+      "Front back side separator is expected, but none found, "
+      "position: %s") (point))
     )
 )
 

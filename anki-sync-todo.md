@@ -1,10 +1,4 @@
-- Fail on an incomlete card
-
-    - estar a fazer - be doing
-    - uma revista --
-    - revista do Expresso -- Expresso magazine
-
-- Full markdown support in cards
+- 20181222.1: Full markdown support in cards
 - Stop parsing at the end of empty deck
 - Create `anki-parse-deck` function
 
