@@ -7,7 +7,7 @@ Irregular verbs
     - eu __vejo__
     - tu __vês__
     - você/ele/ela __vê__
-    - nós vemos
+    - nós __vemos__
     - vocês/eles/elas __vêem__
 
 - eu __vejo__ /p -> [ˈvɐjʒu]

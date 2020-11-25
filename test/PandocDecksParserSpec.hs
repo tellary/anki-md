@@ -97,7 +97,7 @@ validDeck
                   [ Plain
                     [ Str "nós"
                     , Space
-                    , Str "vemos"
+                    , Strong [Str "vemos"]
                     ]
                   ]
                 ,
