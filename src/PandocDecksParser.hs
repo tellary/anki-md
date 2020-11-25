@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module ListParser where
+module PandocDecksParser where
 
 import           Data.Function (on)
 import           Data.List     (groupBy)

@@ -3,6 +3,7 @@ version:             0.1.0.0
 
 dependencies:
 - base
+- containers
 - filepath
 - megaparsec
 - pandoc
@@ -25,7 +26,7 @@ executables:
 
 tests:
   anki-md-test:
-    main:                ListParserSpec.hs
+    main:                Spec.hs
     source-dirs:         test
     ghc-options:
     - -threaded

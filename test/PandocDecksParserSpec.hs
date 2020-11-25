@@ -1,17 +1,19 @@
 {-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-import qualified Data.Text.IO    as TIO
-import           ListParser      (Card (Card, cardBack, cardBidirectional,
-                                        cardFront),
-                                  Deck (Deck, deckCards, deckName),
-                                  bulletListBlocksOrError, decks, isBulletList,
-                                  simpleCard)
-import           System.FilePath (takeDirectory, (</>))
-import           Test.Hspec      (describe, hspec, it, shouldBe, shouldReturn)
-import           Text.Pandoc     (Block (BulletList, Para, Plain),
-                                  Inline (Space, Str, Strong), Pandoc (Pandoc),
-                                  def, readMarkdown, runPure)
+module PandocDecksParserSpec where
+
+import qualified Data.Text.IO      as TIO
+import           PandocDecksParser (Card (Card, cardBack, cardBidirectional,
+                                          cardFront),
+                                    Deck (Deck, deckCards, deckName),
+                                    bulletListBlocksOrError, decks,
+                                    isBulletList, simpleCard)
+import           System.FilePath   (takeDirectory, (</>))
+import           Test.Hspec        (describe, hspec, it, shouldBe, shouldReturn)
+import           Text.Pandoc       (Block (BulletList, Para, Plain),
+                                    Inline (Space, Str, Strong),
+                                    Pandoc (Pandoc), def, readMarkdown, runPure)
 
 validPandoc
   = either undefined id
@@ -173,7 +175,7 @@ pandocSimpleBidirectionalCard
 
 testFile = (takeDirectory __FILE__ </>)
 
-main = hspec $ do
+pandocDecksParserSpec = hspec $ do
   describe "simpleCard" $ do
     it "creates unidirectional card correctly" $
       simpleCard pandocSimpleBidirectionalCard
