@@ -14,8 +14,8 @@ library:
   source-dirs: src
 
 executables:
-  anki-md-exe:
-    main:                Main.hs
+  ankiMd:
+    main:                ankiMd.hs
     source-dirs:         app
     ghc-options:
     - -threaded
@@ -23,6 +23,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - anki-md
+    - split
 
 tests:
   anki-md-test:

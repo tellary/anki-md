@@ -5,19 +5,18 @@ module PandocDecksParser where
 
 import           Data.Function (on)
 import           Data.List     (groupBy)
+import qualified Data.Text.IO  as TIO
 import           Text.Pandoc   (Block (BulletList, Header, Para),
-                                Inline (Space, Str))
+                                Inline (Space, Str), Pandoc (Pandoc), def,
+                                readMarkdown, runPure)
+pandocOrError f
+  = either (error $ "Can't parse Markdown from " ++ f) id
+    . runPure
+    . readMarkdown def <$> TIO.readFile f
 
-isBulletList (BulletList _) = True
-isBulletList _              = False
-
-bulletListBlocks (BulletList blkss)
-  = Just blkss
-bulletListBlocks _ = Nothing
-
-bulletListBlocksOrError
-  = maybe (error "BulletList expected to get list blocks") id
-  . bulletListBlocks
+pandocBlocksOrError f = do
+  Pandoc _ blks <- pandocOrError f
+  return blks
 
 data Card
   = Card
@@ -84,3 +83,5 @@ decks = sequence . groupToDecks . groupBy ((==) `on` header2)
           = [Left $ "Decks must start from Header 2, but found " ++ show blk]
         groupToDecks ([]:_)
           = error "Empty group is not possible"
+
+fileDecks = (decks <$>) .  pandocBlocksOrError

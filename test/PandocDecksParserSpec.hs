@@ -6,29 +6,17 @@ module PandocDecksParserSpec where
 import qualified Data.Text.IO      as TIO
 import           PandocDecksParser (Card (Card, cardBack, cardBidirectional,
                                           cardFront),
-                                    Deck (Deck, deckCards, deckName),
-                                    bulletListBlocksOrError, decks,
-                                    isBulletList, simpleCard)
+                                    Deck (Deck, deckCards, deckName), decks,
+                                    pandocBlocksOrError, simpleCard)
 import           System.FilePath   (takeDirectory, (</>))
-import           Test.Hspec        (describe, hspec, it, shouldBe, shouldReturn)
+import           Test.Hspec        (describe, hspec, it, shouldBe,
+                                    shouldReturn)
 import           Text.Pandoc       (Block (BulletList, Para, Plain),
                                     Inline (Space, Str, Strong),
-                                    Pandoc (Pandoc), def, readMarkdown, runPure)
+                                    Pandoc (Pandoc), def, readMarkdown,
+                                    runPure)
 
-validPandoc
-  = either undefined id
-    . runPure
-    . readMarkdown def <$> (TIO.readFile $ testFile "valid.md")
-
-validPandocBlocks = do
-  Pandoc _ blks <- validPandoc
-  return blks
-
-validBulletList = do
-  Pandoc _ blks <- validPandoc
-  return . head . filter isBulletList $ blks
-
-validBulletListBlocks = bulletListBlocksOrError <$> validBulletList
+validPandocBlocks = pandocBlocksOrError $ testFile "valid.md"
 
 validDeck
   = Deck

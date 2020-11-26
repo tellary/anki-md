@@ -49,7 +49,9 @@ deckImport deck
     bi  = filter  cardBidirectional        . deckCards $ deck
     uni = filter (not . cardBidirectional) . deckCards $ deck
 
-deckFileImport name deck = do
+deckImportFile name deck = do
   let i = deckImport deck
   TIO.writeFile (name ++ "-uni") (unidirectional i)
+  putStrLn (name ++ "-uni written")
   TIO.writeFile (name ++ "-bi" ) (bidirectional  i)
+  putStrLn (name ++ "-bi written" )
