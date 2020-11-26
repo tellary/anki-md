@@ -3,12 +3,17 @@
 
 module PandocDecksParser where
 
+import           Data.Either   (fromRight)
 import           Data.Function (on)
 import           Data.List     (groupBy)
+import qualified Data.Map      as M
+import qualified Data.Text     as T
 import qualified Data.Text.IO  as TIO
-import           Text.Pandoc   (Block (BulletList, Header, Para),
-                                Inline (Space, Str), Pandoc (Pandoc), def,
-                                readMarkdown, runPure)
+import           Text.Pandoc   (Block (BulletList, Header, Para, Plain),
+                                Inline (Space, Str), Meta (Meta),
+                                Pandoc (Pandoc), def, readMarkdown, runPure,
+                                writeHtml5String)
+import           Text.Printf   (printf)
 pandocOrError f
   = either (error $ "Can't parse Markdown from " ++ f) id
     . runPure
@@ -49,7 +54,15 @@ simpleCard inls
               $ Card dir
                 (trimPandocSpace front)
                 [Para . trimPandocSpace $ seps ++ concat backCardGroups]
-      _ -> Left "Neither dash or arrow separator found"
+      front:_ ->
+        Left . printf "Neither dash or arrow separator found for '%s'"
+        . T.unpack
+        . fromRight (error $ "Can't write card front: " ++ show front)
+        . runPure
+        . writeHtml5String def
+        . Pandoc (Meta M.empty)
+        . (:[]) . Plain $ front
+      _       -> error "groupBy cannot return empty list"
 
 complexCard [Para _]
   = Left "Single paragraph can't be a complex card"
