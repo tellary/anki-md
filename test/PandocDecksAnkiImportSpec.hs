@@ -2,10 +2,17 @@
 
 module PandocDecksAnkiImportSpec where
 
+import Data.Either           (fromRight)
+import Data.Text.IO          as TIO
 import PandocDecksAnkiImport (Import (bidirectional, unidirectional),
                               deckImport)
-import PandocDecksParserSpec (validDeck)
-import Test.Hspec            (describe, hspec, it, shouldBe)
+import PandocDecksParser     (fileDecks)
+import PandocDecksParserSpec (testFile, validDeck)
+import Test.Hspec            (describe, hspec, it, shouldBe, shouldReturn)
+
+validLatexImport = TIO.readFile (testFile "latex-uni")
+
+latexDeck = head . fromRight undefined <$> (fileDecks $ testFile "latex.md")
 
 pandocDecksAnkiImportSpec = hspec $ do
   describe "deckImport" $ do
@@ -27,5 +34,8 @@ pandocDecksAnkiImportSpec = hspec $ do
       \\"eu <strong>vejo</strong> /p\"\t\"<p>[ˈvɐjʒu]</p>\"\n\
       \\"tu <strong>vês</strong> /p\"\t\"<p>[ˈveʃ]</p>\"\n\
       \\"ele <strong>vê</strong> /p\"\t\"<p>[ˈve]</p>\""
-
+    it "generates correct latex output" $ do
+      expected <- validLatexImport
+      unidirectional . deckImport <$> latexDeck
+        `shouldReturn` expected
 

@@ -2,3 +2,4 @@
 .stack-work/
 /stack.yaml.lock
 /anki-md.cabal
+.DS_Store

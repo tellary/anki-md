@@ -11,13 +11,18 @@ import qualified Data.Text     as T
 import qualified Data.Text.IO  as TIO
 import           Text.Pandoc   (Block (BulletList, Header, Para, Plain),
                                 Inline (Space, Str), Meta (Meta),
-                                Pandoc (Pandoc), def, readMarkdown, runPure,
-                                writeHtml5String)
+                                Pandoc (Pandoc),
+                                ReaderOptions (readerExtensions),
+                                WriterOptions (writerExtensions), def,
+                                pandocExtensions, readMarkdown, runPure,
+                                writeMarkdown)
 import           Text.Printf   (printf)
+
 pandocOrError f
   = either (error $ "Can't parse Markdown from " ++ f) id
     . runPure
-    . readMarkdown def <$> TIO.readFile f
+    . readMarkdown def { readerExtensions = pandocExtensions }
+    <$> TIO.readFile f
 
 pandocBlocksOrError f = do
   Pandoc _ blks <- pandocOrError f
@@ -59,7 +64,7 @@ simpleCard inls
         . T.unpack
         . fromRight (error $ "Can't write card front: " ++ show front)
         . runPure
-        . writeHtml5String def
+        . writeMarkdown def { writerExtensions = pandocExtensions }
         . Pandoc (Meta M.empty)
         . (:[]) . Plain $ front
       _       -> error "groupBy cannot return empty list"

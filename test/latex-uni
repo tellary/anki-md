@@ -1,0 +1,10 @@
+"Arithmetic progression"	"<p><span class=""math inline"">\(s_n = 1 + 2 + \ldots + n = \sum_{i = 1}^n i\)</span></p>
+<p><span class=""math inline"">\(s_n = \frac {n(n + 1)}{2}\)</span></p>
+<p>Recurrence:</p>
+<p><span class=""math inline"">\(s_n = n + s_{n - 1}\)</span></p>"
+"Geometric progression"	"<p><span class=""math inline"">\(s_n = \sum_{i=0}^n q^i\)</span></p>
+<p><span class=""math inline"">\(s_n = {q^{n + 1} - 1 \over q - 1}\)</span></p>
+<p>Recurrences:</p>
+<p><span class=""math inline"">\(s_n = s_{n - 1} + q^n\)</span></p>
+<p><span class=""math inline"">\(s_n = 1 + q \cdot s_{n - 1}\)</span></p>"
+"<span class=""math inline"">\(2^1 + 2^2 + ... 2^n\)</span>?"	"<p><span class=""math inline"">\(2^{n+1} - 1\)</span></p>"

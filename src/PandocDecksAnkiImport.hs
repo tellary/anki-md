@@ -2,6 +2,7 @@
 
 module PandocDecksAnkiImport where
 
+import           Control.Monad     (unless)
 import           Data.Either       (fromRight)
 import qualified Data.Map          as M
 import           Data.Text         (Text, append)
@@ -10,26 +11,34 @@ import qualified Data.Text.IO      as TIO
 import           PandocDecksParser (Card (cardBack, cardBidirectional,
                                           cardFront),
                                     Deck (deckCards))
-import           Text.Pandoc       (Block (Plain), Meta (Meta), Pandoc (Pandoc),
-                                    def, runPure, writeHtml5String)
+import           Text.Pandoc       (Block (Plain), HTMLMathMethod (MathJax),
+                                    Meta (Meta), Pandoc (Pandoc),
+                                    WriterOptions (writerExtensions,
+                                                   writerHTMLMathMethod),
+                                    def, pandocExtensions, runPure,
+                                    writeHtml5String)
+
+writeHtml p
+  = fromRight
+    (error $ "Can't write card html: " ++ show p)
+    . runPure
+    . writeHtml5String
+      def { writerExtensions = pandocExtensions
+          , writerHTMLMathMethod = MathJax "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          }
+    $ p
 
 cardImport card
   = (quoteCardText cardFrontHtml)
     `append` "\t" `append`
     (quoteCardText cardBackHtml)
   where cardFrontHtml
-          = fromRight
-            (error $ "Can't write card front: " ++ show (cardFront card))
-          . runPure
-          . writeHtml5String def
+          = writeHtml
           . Pandoc (Meta M.empty)
           . (:[]) . Plain
           $ cardFront card
         cardBackHtml
-          = fromRight
-            (error $ "Can't write card back: " ++ show (cardBack card))
-          . runPure
-          . writeHtml5String def
+          = writeHtml
           . Pandoc (Meta M.empty)
           $ cardBack card
 
@@ -51,7 +60,9 @@ deckImport deck
 
 deckImportFile name deck = do
   let i = deckImport deck
-  TIO.writeFile (name ++ "-uni") (unidirectional i)
-  putStrLn (name ++ "-uni written")
-  TIO.writeFile (name ++ "-bi" ) (bidirectional  i)
-  putStrLn (name ++ "-bi written" )
+  unless (T.null $ unidirectional i) $ do
+    TIO.writeFile (name ++ "-uni") (unidirectional i)
+    putStrLn (name ++ "-uni written")
+  unless (T.null $ bidirectional  i) $ do
+    TIO.writeFile (name ++ "-bi" ) (bidirectional  i)
+    putStrLn (name ++ "-bi written" )
