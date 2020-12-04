@@ -3,18 +3,14 @@
 
 module PandocDecksParserSpec where
 
-import qualified Data.Text.IO      as TIO
-import           PandocDecksParser (Card (Card, cardBack, cardBidirectional,
-                                          cardFront),
-                                    Deck (Deck, deckCards, deckName), decks,
-                                    pandocBlocksOrError, simpleCard)
-import           System.FilePath   (takeDirectory, (</>))
-import           Test.Hspec        (describe, hspec, it, shouldBe,
-                                    shouldReturn)
-import           Text.Pandoc       (Block (BulletList, Para, Plain),
-                                    Inline (Space, Str, Strong),
-                                    Pandoc (Pandoc), def, readMarkdown,
-                                    runPure)
+import PandocDecksParser (Card (Card, cardBack, cardBidirectional, cardFront),
+                          Deck (Deck, deckCards, deckName), dashStr, decks,
+                          pandocBlocksOrError, simpleCard)
+import System.FilePath   (takeDirectory, (</>))
+import Test.Hspec        (describe, hspec, it, shouldBe, shouldReturn)
+import Text.Pandoc       (Block (BulletList, Para, Plain),
+                          Inline (Quoted, Space, Str, Strong),
+                          QuoteType (DoubleQuote))
 
 validPandocBlocks = pandocBlocksOrError $ testFile "valid.md"
 
@@ -56,7 +52,7 @@ validDeck
               , Space
               , Str "de"
               , Space
-              , Str "\"ver\""
+              , Quoted DoubleQuote [ Str "ver" ]
               ]
           , cardBack =
               [ BulletList
@@ -156,7 +152,7 @@ validDeck
 
 pandocSimpleBidirectionalCard
   = [ Str "ver", Space
-    , Str "--" , Space
+    , Str dashStr, Space
     , Str "to" , Space, Str "watch;"
     , Space, Str "to", Space, Str "see;"
     , Space, Str "to", Space, Str "view"]

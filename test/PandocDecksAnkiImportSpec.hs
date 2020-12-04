@@ -24,7 +24,7 @@ pandocDecksAnkiImportSpec = hspec $ do
     it "outputs unidirectional cards import correctly" $
       (unidirectional . deckImport $ validDeck)
       `shouldBe`
-      "\"Presente do indicativo de \"\"ver\"\"\"\t\"<ul>\n\
+      "\"Presente do indicativo de \8220ver\8221\"\t\"<ul>\n\
       \<li>eu <strong>vejo</strong></li>\n\
       \<li>tu <strong>vês</strong></li>\n\
       \<li>você/ele/ela <strong>vê</strong></li>\n\

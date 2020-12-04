@@ -12,8 +12,7 @@ import qualified Data.Text.IO  as TIO
 import           Text.Pandoc   (Block (BulletList, Header, Para, Plain),
                                 Inline (Space, Str), Meta (Meta),
                                 Pandoc (Pandoc),
-                                ReaderOptions (readerExtensions),
-                                WriterOptions (writerExtensions), def,
+                                ReaderOptions (readerExtensions), def,
                                 pandocExtensions, readMarkdown, runPure,
                                 writeMarkdown)
 import           Text.Printf   (printf)
@@ -37,9 +36,14 @@ data Card
 
 data CardDelim = Dash | Arrow deriving (Show, Eq)
 
-cardDelim (Str "--") = Just Dash
-cardDelim (Str "->") = Just Arrow
-cardDelim _          = Nothing
+dashStr = "\8211"
+arrowStr = "->"
+
+cardDelim (Str str)
+  | str == dashStr  = Just Dash
+  | str == arrowStr = Just Arrow
+  | otherwise       = Nothing
+cardDelim _         = Nothing
 
 isSpace Space = True
 isSpace _     = False
@@ -64,7 +68,7 @@ simpleCard inls
         . T.unpack
         . fromRight (error $ "Can't write card front: " ++ show front)
         . runPure
-        . writeMarkdown def { writerExtensions = pandocExtensions }
+        . writeMarkdown def
         . Pandoc (Meta M.empty)
         . (:[]) . Plain $ front
       _       -> error "groupBy cannot return empty list"
