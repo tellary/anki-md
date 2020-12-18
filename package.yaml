@@ -6,7 +6,7 @@ dependencies:
 - containers
 - filepath
 - megaparsec
-- pandoc
+- pandoc >= 2.9.2
 - pretty-simple
 - text
 

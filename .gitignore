@@ -3,3 +3,6 @@
 /stack.yaml.lock
 /anki-md.cabal
 .DS_Store
+*.html
+*-bi
+*-uni

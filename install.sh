@@ -1,4 +1,4 @@
 #!/bin/bash
 
 stack build
-sudo cabal install --prefix /usr/local
+sudo cp $(stack path --local-install-root)/bin/ankiMd /usr/local/bin
