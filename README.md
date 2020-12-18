@@ -10,7 +10,7 @@ You may find this useful if
 2. You prefer Markdown to manage your documents.
 
 If you happen to like Emacs and `org-mode`, then you should
-check out [`anki-editor`](https://yiufung.net/post/anki-org/).
+check out [`anki-editor`][anki-editor].
 
 This tool converts a card deck in simple Markdown format to Anki import
 files. You have to import the files to Anki manually after conversion.
@@ -18,8 +18,8 @@ files. You have to import the files to Anki manually after conversion.
 Deck format
 -----------
 
-A deck is represented by a file in markdown format with
-a header (header 2) serving as a deck name followed by an unordered list.
+A file in Markdown format represents a deck of cards.
+Header (header 2) serves as a deck name followed by an unordered list.
 Each element of the list is a separate card.
 
 Here is a sample of cards from a deck on Portuguese "Irregular verbs"
@@ -52,14 +52,14 @@ to separate a front of a card and a back of the card. For example:
 ```
 
 A single paragraph list element with an arrow (`->`) instead
-of a dash represents an uni-directional card:
+of a dash represents a uni-directional card:
 
 ```
 - eu __vejo__ /p -> [ˈvɐjʒu]
 ```
 
 This card looks as follows when imported. You may notice that
-markdown formatting and unicode is respected.
+markdown formatting and Unicode is respected.
 
 ![](doc/simple_uni.png)
 
@@ -101,7 +101,7 @@ Markdown math is supported, for example:
 Build
 -----
 
-Build and execute with `stack`:
+Build and execute with [Haskell `stack`][haskell-stack]:
 
 ```
 $ stack build
@@ -124,7 +124,7 @@ Usage
 -----
 
 You provide a Markdown file with cards deck as an argument
-to the `ankiMd` command and it outputs files with `-uni` and `-bi`
+to the `ankiMd` command, and it outputs files with `-uni` and `-bi`
 suffixes in Anki import format:
 
 ```
@@ -133,17 +133,26 @@ test/valid-uni written
 test/valid-bi written
 ```
 
-A file with the `-uni` suffix should be imported to Anki as "Basic" card
-type. A file with the `-bi` suffix should be imported to Anki as
-"Basic (and reversed card)" type.
+You will import the resulting file with the `-uni` suffix to Anki as the "Basic" card type. A file with the `-bi` suffix -- as the "Basic (and reversed card)" type.
 
 ![](doc/import.png)
+
+Run with Docker
+---------------
+
+I can create a Docker image to run `ankiMd` if a user is interested. Please, create a GitHub issue if you want this to be supported.
+
+Web UI
+------
+
+I can create a Web UI to convert from Markdown to Anki import format
+if a user is interested. Please, create a GitHub issue if you want this to be supported.
 
 Setup card styles and templates for HTML lists
 ----------------------------------------------
 
 If you want Anki to render HTML lists nicely,
-then you should setup card CSS styles as follows.
+then you should set up card CSS styles as follows.
 
 Click "Cards..." when editing or browsing a card,
 select any card with "Card 1" value in "Card" column:
@@ -175,4 +184,5 @@ Update templates and styling for the "Card 2" type.
 Select any card with "Card 2" value in "Card" column
 and paste the same style.
 
-[reddit-anki-templates]: https://www.reddit.com/r/Anki/comments/frlt9z/tip_centerleft_alignment_for_anki_cards/
+[anki-editor]: https://yiufung.net/post/anki-org/
+[haskell-stack]: https://docs.haskellstack.org/en/stable/install_and_upgrade/
