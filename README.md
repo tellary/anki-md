@@ -12,7 +12,9 @@ You may find this useful if
 If you happen to like Emacs and `org-mode`, then you should
 check out [`anki-editor`][anki-editor].
 
-This tool converts a card deck in simple Markdown format to Anki import
+Unlike `anki-editor`,
+this tool doesn't synchronize a text file contents with Anki,
+but it converts a card deck in simple Markdown format to Anki import
 files. You have to import the files to Anki manually after conversion.
 
 Deck format
@@ -140,13 +142,13 @@ You will import the resulting file with the `-uni` suffix to Anki as the "Basic"
 Run with Docker
 ---------------
 
-I can create a Docker image to run `ankiMd` if a user is interested. Please, create a GitHub issue if you want this to be supported.
+I can create a Docker image to run `ankiMd` if any user is interested. Please, create a GitHub issue if you want this to be supported.
 
 Web UI
 ------
 
 I can create a Web UI to convert from Markdown to Anki import format
-if a user is interested. Please, create a GitHub issue if you want this to be supported.
+if any user is interested. Please, create a GitHub issue if you want this to be supported.
 
 Setup card styles and templates for HTML lists
 ----------------------------------------------
