@@ -150,8 +150,8 @@ Web UI
 I can create a Web UI to convert from Markdown to Anki import format
 if any user is interested. Please, create a GitHub issue if you want this to be supported.
 
-Setup card styles and templates for HTML lists
-----------------------------------------------
+Setup card styles for HTML lists
+--------------------------------
 
 If you want Anki to render HTML lists nicely,
 then you should set up card CSS styles as follows.
@@ -185,6 +185,39 @@ ol {
 Update templates and styling for the "Card 2" type.
 Select any card with "Card 2" value in "Card" column
 and paste the same style.
+
+Setup card styles for source code
+---------------------------------
+
+An example card like this, may be rendered with source code highlighting and
+alignment of the source code to the lift:
+
+```
+- Iterate multiple indexes in Java
+
+    ```java
+    int i, j;
+    for ( i = 0, j = 0
+        ; i < s.length && j < t.length
+        ; ++i, ++j) {
+        System.out.println(s[i]);
+        System.out.println(t[j]);
+    }
+    ```
+
+    ```java
+    for (int i = 0, j = 0 ...)
+    ```
+```
+
+As follows:
+
+![](doc/src.png)
+
+You should update card CSS styles the same way as in
+"Setup card styles for HTML lists", but **append** (not replace)
+contents of [this css file](source_code.css)
+to that's already setup for HTML lists.
 
 [anki-editor]: https://yiufung.net/post/anki-org/
 [haskell-stack]: https://docs.haskellstack.org/en/stable/install_and_upgrade/
