@@ -103,20 +103,28 @@ Markdown math is supported, for example:
 Build
 -----
 
-Build and execute with [Haskell `stack`][haskell-stack]:
-
-```
-$ stack build
-$ stack exec -- ankiMd test/valid.md
-test/valid-uni written
-test/valid-bi written
-```
-
-Or, install globally:
+Builds with Nix
 
 ```
 $ bash install.sh
-[sudo] password for XXXX: *********
+installing 'anki-sync'
+this derivation will be built:
+  /nix/store/w244iis7nrd44bxb859489m2z1fv621r-anki-sync.drv
+building '/nix/store/w244iis7nrd44bxb859489m2z1fv621r-anki-sync.drv'...
+Running phase: unpackPhase
+unpacking source archive /nix/store/zl05xqj7nfcgjwdd293cqfkljx74ayff-anki-sync
+source root is anki-sync
+Running phase: patchPhase
+Running phase: updateAutotoolsGnuConfigScriptsPhase
+Running phase: configurePhase
+no configure script, doing nothing
+Running phase: buildPhase
+Running phase: installPhase
+Running phase: fixupPhase
+checking for references to /private/tmp/nix-build-anki-sync.drv-0/ in /nix/store/n3yhyqj1ji2zfmg9hqzmp8vwgp86b836-anki-sync...
+patching script interpreter paths in /nix/store/n3yhyqj1ji2zfmg9hqzmp8vwgp86b836-anki-sync
+stripping (with command strip and flags -S) in  /nix/store/n3yhyqj1ji2zfmg9hqzmp8vwgp86b836-anki-sync/bin
+building '/nix/store/7pm6vmma2qq5fscsjma11vg8hzi2r5xf-user-environment.drv'...
 $ ankiMd test/valid.md
 test/valid-uni written
 test/valid-bi written
